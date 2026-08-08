@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Fadak AI is coming soon. Get notified at launch." />
+  <title>Fadak AI — Coming Soon</title>
+
+  <!--
+    ====================================================================
+    FADAK AI — Coming Soon
+    --------------------------------------------------------------------
+    Palette (exact — swap hex values here only):
+      --concrete   #E8E4DC   primary background (quarry dust / concrete)
+      --basalt     #211F1C   primary text / solid rock fill
+      --stone      #8C8579   secondary text, borders, muted UI
+      --amber      #E3A542   segmentation mask outline A
+      --teal       #3E8E8A   segmentation mask outline B
+      --coral      #C4573B   CTA signal only (button + hover)
+
+    Type:
+      Display — Space Grotesk  (wordmark, headline)
+      Body    — IBM Plex Sans  (subhead, form)
+      Mono    — IBM Plex Mono  (measurement readouts on fragments)
+
+    Signature: SVG boulder that fractures into instance-masked pieces.
+    ====================================================================
+  -->
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23211F1C'/%3E%3Cpolygon points='8,22 12,10 18,14 24,9 27,20 20,26 10,25' fill='none' stroke='%23E3A542' stroke-width='1.5'/%3E%3Cpolygon points='12,10 18,14 16,22 8,22' fill='none' stroke='%233E8E8A' stroke-width='1.5'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --concrete: #E8E4DC;
+      --basalt: #211F1C;
+      --stone: #8C8579;
+      --amber: #E3A542;
+      --teal: #3E8E8A;
+      --coral: #C4573B;
+
+      --font-display: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      --font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+      --step--1: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+      --step-0: clamp(0.9375rem, 0.9rem + 0.18vw, 1rem);
+      --step-1: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+      --step-2: clamp(1.75rem, 1.35rem + 1.6vw, 2.75rem);
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --focus-ring: 0 0 0 3px var(--concrete), 0 0 0 5px var(--teal);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      line-height: 1.5;
+      color: var(--basalt);
+      background: var(--concrete);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Quiet industrial grain — not a gradient blob */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image:
+        radial-gradient(rgba(33, 31, 28, 0.045) 0.6px, transparent 0.7px);
+      background-size: 3px 3px;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(1.25rem, 3.5vw, 2.25rem);
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: var(--step-0);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--basalt);
+      text-decoration: none;
+      align-self: flex-start;
+      opacity: 0;
+      animation: fade-in 0.6s var(--ease-out) 0.05s forwards;
+    }
+
+    .wordmark span { color: var(--stone); }
+
+    .hero {
+      flex: 1;
+      display: grid;
+      align-content: center;
+      gap: clamp(1.5rem, 4vw, 2.5rem);
+      width: min(100%, 56rem);
+      margin: 0 auto;
+      padding: clamp(1.5rem, 5vw, 3rem) 0;
+    }
+
+    @media (min-width: 800px) {
+      .hero {
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        align-items: center;
+        gap: clamp(2rem, 5vw, 3.5rem);
+      }
+    }
+
+    /* ---------- Signature: fracture illustration ---------- */
+    .fracture {
+      position: relative;
+      width: min(100%, 22rem);
+      margin: 0 auto;
+      aspect-ratio: 1;
+      opacity: 0;
+      animation: fade-in 0.5s var(--ease-out) 0.1s forwards;
+    }
+
+    @media (min-width: 800px) {
+      .fracture {
+        width: 100%;
+        max-width: 26rem;
+        margin: 0;
+      }
+    }
+
+    .fracture svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .fracture .boulder {
+      fill: var(--basalt);
+      transform-origin: 50% 50%;
+      transform-box: fill-box;
+    }
+
+    .fracture .fragment {
+      fill: var(--basalt);
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    .fracture .fragment.amber { stroke: var(--amber); }
+    .fracture .fragment.teal { stroke: var(--teal); }
+
+    .fracture .readout {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      font-weight: 500;
+      fill: var(--stone);
+      opacity: 0;
+    }
+
+    /* Intact → fracture sequence */
+    .fracture.is-animating .boulder {
+      animation: boulder-split 0.55s var(--ease-out) 0.15s forwards;
+    }
+
+    .fracture.is-animating .fragment {
+      animation: fragment-in 0.7s var(--ease-out) forwards;
+    }
+
+    .fracture.is-animating .fragment:nth-child(2) { animation-delay: 0.45s; }
+    .fracture.is-animating .fragment:nth-child(3) { animation-delay: 0.52s; }
+    .fracture.is-animating .fragment:nth-child(4) { animation-delay: 0.58s; }
+    .fracture.is-animating .fragment:nth-child(5) { animation-delay: 0.64s; }
+    .fracture.is-animating .fragment:nth-child(6) { animation-delay: 0.70s; }
+    .fracture.is-animating .fragment:nth-child(7) { animation-delay: 0.76s; }
+    .fracture.is-animating .fragment:nth-child(8) { animation-delay: 0.82s; }
+    .fracture.is-animating .fragment:nth-child(9) { animation-delay: 0.88s; }
+
+    .fracture.is-animating .readout {
+      animation: fade-in 0.4s var(--ease-out) forwards;
+    }
+
+    .fracture.is-animating .readout:nth-of-type(1) { animation-delay: 1.05s; }
+    .fracture.is-animating .readout:nth-of-type(2) { animation-delay: 1.15s; }
+    .fracture.is-animating .readout:nth-of-type(3) { animation-delay: 1.25s; }
+
+    /* Final state (reduced motion / post-animation) */
+    .fracture.is-final .boulder { opacity: 0; visibility: hidden; }
+    .fracture.is-final .fragment { opacity: 1; }
+    .fracture.is-final .readout { opacity: 1; }
+
+    .copy {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(0.6rem);
+      animation: rise 0.75s var(--ease-out) 0.35s forwards;
+    }
+
+    @media (min-width: 800px) {
+      .copy { text-align: left; }
+    }
+
+    .headline {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: var(--step-2);
+      line-height: 1.12;
+      letter-spacing: 0.02em;
+      margin: 0 0 0.85rem;
+      color: var(--basalt);
+    }
+
+    /* Amber / teal as paired mask accents flanking the headline */
+    .headline::before,
+    .headline::after {
+      content: "";
+      display: inline-block;
+      width: 0.55rem;
+      height: 0.55rem;
+      margin-right: 0.55rem;
+      border: 1.5px solid var(--amber);
+      vertical-align: 0.2em;
+    }
+
+    .headline::after {
+      margin-right: 0;
+      margin-left: 0.55rem;
+      border-color: var(--teal);
+    }
+
+    .subhead {
+      margin: 0 0 1.75rem;
+      max-width: 28rem;
+      color: var(--stone);
+      font-size: var(--step-1);
+      font-weight: 400;
+    }
+
+    @media (min-width: 800px) {
+      .subhead { margin-left: 0; }
+    }
+
+    @media (max-width: 799px) {
+      .subhead { margin-left: auto; margin-right: auto; }
+    }
+
+    .notify {
+      width: min(100%, 26rem);
+    }
+
+    @media (max-width: 799px) {
+      .notify { margin: 0 auto; }
+    }
+
+    .notify-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .notify-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    @media (min-width: 480px) {
+      .notify-row {
+        flex-direction: row;
+        align-items: stretch;
+      }
+    }
+
+    .notify input[type="email"] {
+      flex: 1;
+      min-width: 0;
+      appearance: none;
+      border: 1.5px solid var(--stone);
+      background: rgba(255, 255, 255, 0.35);
+      color: var(--basalt);
+      font: inherit;
+      font-size: var(--step-0);
+      padding: 0.85rem 1rem;
+      border-radius: 0.2rem;
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .notify input[type="email"]::placeholder {
+      color: var(--stone);
+    }
+
+    .notify input[type="email"]:hover {
+      border-color: var(--basalt);
+    }
+
+    .notify input[type="email"]:focus-visible {
+      border-color: var(--teal);
+      box-shadow: var(--focus-ring);
+    }
+
+    .notify button {
+      appearance: none;
+      border: none;
+      background: var(--coral);
+      color: var(--concrete);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: var(--step-0);
+      letter-spacing: 0.04em;
+      padding: 0.85rem 1.25rem;
+      border-radius: 0.2rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s ease, transform 0.15s var(--ease-out);
+    }
+
+    .notify button:hover {
+      background: #a84730; /* coral hover — still the signal color family */
+    }
+
+    .notify button:active {
+      transform: translateY(1px);
+    }
+
+    .notify button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .notify button:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    .form-status {
+      min-height: 1.35em;
+      margin: 0.7rem 0 0;
+      font-size: var(--step--1);
+      color: var(--stone);
+    }
+
+    .form-status[data-state="success"] {
+      color: var(--teal);
+      font-weight: 500;
+    }
+
+    .form-status[data-state="error"] {
+      color: var(--coral);
+    }
+
+    .audience {
+      margin: 1.5rem 0 0;
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      letter-spacing: 0.04em;
+      color: var(--stone);
+    }
+
+    @keyframes fade-in {
+      to { opacity: 1; }
+    }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes boulder-split {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      70% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.04);
+        visibility: hidden;
+      }
+    }
+
+    @keyframes fragment-in {
+      from {
+        opacity: 0;
+        transform: scale(0.92) translate(var(--dx, 0), var(--dy, 0));
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .wordmark,
+      .fracture,
+      .copy {
+        opacity: 1;
+        transform: none;
+      }
+
+      .fracture .boulder { opacity: 0; visibility: hidden; }
+      .fracture .fragment,
+      .fracture .readout { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="wordmark" href="/" aria-label="Fadak AI">Fadak <span>AI</span></a>
+
+    <div class="hero">
+      <!-- Signature: boulder → fragmented instance masks -->
+      <div class="fracture" id="fracture" aria-hidden="true">
+        <svg viewBox="0 0 240 240" role="img">
+          <!-- Intact boulder (solid) -->
+          <polygon
+            class="boulder"
+            points="52,168 68,78 118,42 168,58 204,112 192,178 142,208 78,198"
+          />
+
+          <!-- Fragments: alternating amber / teal outlines like adjacent masks -->
+          <polygon class="fragment amber" style="--dx:-10px;--dy:-8px"
+            points="68,78 118,42 138,72 112,118 78,108" />
+          <polygon class="fragment teal" style="--dx:8px;--dy:-12px"
+            points="118,42 168,58 178,96 138,72" />
+          <polygon class="fragment amber" style="--dx:14px;--dy:-2px"
+            points="168,58 204,112 186,138 158,128 178,96" />
+          <polygon class="fragment teal" style="--dx:12px;--dy:10px"
+            points="204,112 192,178 152,168 158,128 186,138" />
+          <polygon class="fragment amber" style="--dx:2px;--dy:14px"
+            points="192,178 142,208 118,176 152,168" />
+          <polygon class="fragment teal" style="--dx:-8px;--dy:12px"
+            points="142,208 78,198 92,152 118,176" />
+          <polygon class="fragment amber" style="--dx:-14px;--dy:4px"
+            points="78,198 52,168 78,108 112,118 92,152" />
+          <polygon class="fragment teal" style="--dx:-4px;--dy:-2px"
+            points="112,118 138,72 178,96 158,128 152,168 118,176 92,152" />
+
+          <!-- Mono measurement readouts (instrument feel) -->
+          <text class="readout" x="88" y="68">P80 42mm</text>
+          <text class="readout" x="168" y="150">id:03</text>
+          <text class="readout" x="58" y="188">128mm</text>
+        </svg>
+      </div>
+
+      <div class="copy">
+        <!--
+          HEADLINE OPTIONS (swap the visible <h1> text):
+          1. Particle size from a photo.          ← current
+          2. Blast face in. P80 out.
+          3. Sieve analysis, without the sieve.
+        -->
+        <h1 class="headline">Particle size from a photo.</h1>
+
+        <p class="subhead">
+          Fadak AI measures rock fragmentation from blast-face and muck-pile
+          imagery — coming soon to the field.
+        </p>
+
+        <form class="notify" id="notify-form" novalidate>
+          <label class="notify-label" for="email">Email address</label>
+          <div class="notify-row">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              inputmode="email"
+              required
+              placeholder="you@mine.com"
+              aria-describedby="form-status"
+            />
+            <button type="submit">Get notified</button>
+          </div>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="audience">Built for blast engineers and process metallurgists</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var fracture = document.getElementById("fracture");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduceMotion) {
+        fracture.classList.add("is-final");
+      } else {
+        // Force reflow so the animation reliably starts on load
+        void fracture.offsetWidth;
+        fracture.classList.add("is-animating");
+        fracture.addEventListener("animationend", function onEnd(event) {
+          if (event.target.classList.contains("readout") ||
+              event.animationName === "fade-in") {
+            fracture.classList.add("is-final");
+            fracture.classList.remove("is-animating");
+            fracture.removeEventListener("animationend", onEnd);
+          }
+        });
+        // Safety: lock final state after total sequence (~1.4s)
+        window.setTimeout(function () {
+          fracture.classList.add("is-final");
+          fracture.classList.remove("is-animating");
+        }, 1500);
+      }
+
+      var form = document.getElementById("notify-form");
+      var email = document.getElementById("email");
+      var status = document.getElementById("form-status");
+      var button = form.querySelector('button[type="submit"]');
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var value = (email.value || "").trim();
+        var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+        if (!valid) {
+          status.dataset.state = "error";
+          status.textContent = "Enter a valid email address.";
+          email.focus();
+          return;
+        }
+
+        // TODO: Wire up a real email/API service here.
+        // Example: POST to waitlist endpoint (Resend, Mailchimp, Formspree, etc.)
+        // await fetch("/api/waitlist", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ email: value }),
+        // });
+
+        button.disabled = true;
+        email.disabled = true;
+        status.dataset.state = "success";
+        status.textContent = "You're on the list.";
+      });
+    })();
+  </script>
+</body>
+</html>
