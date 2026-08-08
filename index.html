@@ -547,6 +547,11 @@
       var status = document.getElementById("form-status");
       var button = form.querySelector('button[type="submit"]');
 
+      // Waitlist notifications → hussain.hn18@gmail.com via FormSubmit
+      // First submission: check that inbox and confirm FormSubmit's activation email.
+      var NOTIFY_ENDPOINT =
+        "https://formsubmit.co/ajax/hussain.hn18@gmail.com";
+
       form.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -560,18 +565,36 @@
           return;
         }
 
-        // TODO: Wire up a real email/API service here.
-        // Example: POST to waitlist endpoint (Resend, Mailchimp, Formspree, etc.)
-        // await fetch("/api/waitlist", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ email: value }),
-        // });
-
         button.disabled = true;
-        email.disabled = true;
-        status.dataset.state = "success";
-        status.textContent = "You're on the list.";
+        status.dataset.state = "";
+        status.textContent = "Sending…";
+
+        fetch(NOTIFY_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            email: value,
+            _subject: "Fadak AI waitlist signup",
+            message: "New waitlist signup: " + value,
+          }),
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error("Request failed");
+            return response.json();
+          })
+          .then(function () {
+            email.disabled = true;
+            status.dataset.state = "success";
+            status.textContent = "You're on the list.";
+          })
+          .catch(function () {
+            button.disabled = false;
+            status.dataset.state = "error";
+            status.textContent = "Something went wrong. Try again.";
+          });
       });
     })();
   </script>
