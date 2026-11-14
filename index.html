@@ -1,602 +1,426 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Fadak AI is coming soon. Get notified at launch." />
-  <title>Fadak AI — Coming Soon</title>
-
-  <!--
-    ====================================================================
-    FADAK AI — Coming Soon
-    --------------------------------------------------------------------
-    Palette (exact — swap hex values here only):
-      --concrete   #E8E4DC   primary background (quarry dust / concrete)
-      --basalt     #211F1C   primary text / solid rock fill
-      --stone      #8C8579   secondary text, borders, muted UI
-      --amber      #E3A542   segmentation mask outline A
-      --teal       #3E8E8A   segmentation mask outline B
-      --coral      #C4573B   CTA signal only (button + hover)
-
-    Type:
-      Display — Space Grotesk  (wordmark, headline)
-      Body    — IBM Plex Sans  (subhead, form)
-      Mono    — IBM Plex Mono  (measurement readouts on fragments)
-
-    Signature: SVG boulder that fractures into instance-masked pieces.
-    ====================================================================
-  -->
-
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23211F1C'/%3E%3Cpolygon points='8,22 12,10 18,14 24,9 27,20 20,26 10,25' fill='none' stroke='%23E3A542' stroke-width='1.5'/%3E%3Cpolygon points='12,10 18,14 16,22 8,22' fill='none' stroke='%233E8E8A' stroke-width='1.5'/%3E%3C/svg%3E" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-
-  <style>
-    :root {
-      --concrete: #E8E4DC;
-      --basalt: #211F1C;
-      --stone: #8C8579;
-      --amber: #E3A542;
-      --teal: #3E8E8A;
-      --coral: #C4573B;
-
-      --font-display: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
-      --font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-
-      --step--1: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
-      --step-0: clamp(0.9375rem, 0.9rem + 0.18vw, 1rem);
-      --step-1: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
-      --step-2: clamp(1.75rem, 1.35rem + 1.6vw, 2.75rem);
-
-      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-      --focus-ring: 0 0 0 3px var(--concrete), 0 0 0 5px var(--teal);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html { height: 100%; }
-
-    body {
-      margin: 0;
-      min-height: 100%;
-      font-family: var(--font-body);
-      font-size: var(--step-0);
-      line-height: 1.5;
-      color: var(--basalt);
-      background: var(--concrete);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    /* Quiet industrial grain — not a gradient blob */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.35;
-      background-image:
-        radial-gradient(rgba(33, 31, 28, 0.045) 0.6px, transparent 0.7px);
-      background-size: 3px 3px;
-    }
-
-    .page {
-      position: relative;
-      z-index: 1;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      padding: clamp(1.25rem, 3.5vw, 2.25rem);
-    }
-
-    .wordmark {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: var(--step-0);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--basalt);
-      text-decoration: none;
-      align-self: flex-start;
-      opacity: 0;
-      animation: fade-in 0.6s var(--ease-out) 0.05s forwards;
-    }
-
-    .wordmark span { color: var(--stone); }
-
-    .hero {
-      flex: 1;
-      display: grid;
-      align-content: center;
-      gap: clamp(1.5rem, 4vw, 2.5rem);
-      width: min(100%, 56rem);
-      margin: 0 auto;
-      padding: clamp(1.5rem, 5vw, 3rem) 0;
-    }
-
-    @media (min-width: 800px) {
-      .hero {
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-        align-items: center;
-        gap: clamp(2rem, 5vw, 3.5rem);
-      }
-    }
-
-    /* ---------- Signature: fracture illustration ---------- */
-    .fracture {
-      position: relative;
-      width: min(100%, 22rem);
-      margin: 0 auto;
-      aspect-ratio: 1;
-      opacity: 0;
-      animation: fade-in 0.5s var(--ease-out) 0.1s forwards;
-    }
-
-    @media (min-width: 800px) {
-      .fracture {
-        width: 100%;
-        max-width: 26rem;
-        margin: 0;
-      }
-    }
-
-    .fracture svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .fracture .boulder {
-      fill: var(--basalt);
-      transform-origin: 50% 50%;
-      transform-box: fill-box;
-    }
-
-    .fracture .fragment {
-      fill: var(--basalt);
-      stroke-width: 1.5;
-      stroke-linejoin: round;
-      opacity: 0;
-      transform-origin: center;
-      transform-box: fill-box;
-    }
-
-    .fracture .fragment.amber { stroke: var(--amber); }
-    .fracture .fragment.teal { stroke: var(--teal); }
-
-    .fracture .readout {
-      font-family: var(--font-mono);
-      font-size: 7px;
-      font-weight: 500;
-      fill: var(--stone);
-      opacity: 0;
-    }
-
-    /* Intact → fracture sequence */
-    .fracture.is-animating .boulder {
-      animation: boulder-split 0.55s var(--ease-out) 0.15s forwards;
-    }
-
-    .fracture.is-animating .fragment {
-      animation: fragment-in 0.7s var(--ease-out) forwards;
-    }
-
-    .fracture.is-animating .fragment:nth-child(2) { animation-delay: 0.45s; }
-    .fracture.is-animating .fragment:nth-child(3) { animation-delay: 0.52s; }
-    .fracture.is-animating .fragment:nth-child(4) { animation-delay: 0.58s; }
-    .fracture.is-animating .fragment:nth-child(5) { animation-delay: 0.64s; }
-    .fracture.is-animating .fragment:nth-child(6) { animation-delay: 0.70s; }
-    .fracture.is-animating .fragment:nth-child(7) { animation-delay: 0.76s; }
-    .fracture.is-animating .fragment:nth-child(8) { animation-delay: 0.82s; }
-    .fracture.is-animating .fragment:nth-child(9) { animation-delay: 0.88s; }
-
-    .fracture.is-animating .readout {
-      animation: fade-in 0.4s var(--ease-out) forwards;
-    }
-
-    .fracture.is-animating .readout:nth-of-type(1) { animation-delay: 1.05s; }
-    .fracture.is-animating .readout:nth-of-type(2) { animation-delay: 1.15s; }
-    .fracture.is-animating .readout:nth-of-type(3) { animation-delay: 1.25s; }
-
-    /* Final state (reduced motion / post-animation) */
-    .fracture.is-final .boulder { opacity: 0; visibility: hidden; }
-    .fracture.is-final .fragment { opacity: 1; }
-    .fracture.is-final .readout { opacity: 1; }
-
-    .copy {
-      text-align: center;
-      opacity: 0;
-      transform: translateY(0.6rem);
-      animation: rise 0.75s var(--ease-out) 0.35s forwards;
-    }
-
-    @media (min-width: 800px) {
-      .copy { text-align: left; }
-    }
-
-    .headline {
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: var(--step-2);
-      line-height: 1.12;
-      letter-spacing: 0.02em;
-      margin: 0 0 0.85rem;
-      color: var(--basalt);
-    }
-
-    /* Amber / teal as paired mask accents flanking the headline */
-    .headline::before,
-    .headline::after {
-      content: "";
-      display: inline-block;
-      width: 0.55rem;
-      height: 0.55rem;
-      margin-right: 0.55rem;
-      border: 1.5px solid var(--amber);
-      vertical-align: 0.2em;
-    }
-
-    .headline::after {
-      margin-right: 0;
-      margin-left: 0.55rem;
-      border-color: var(--teal);
-    }
-
-    .subhead {
-      margin: 0 0 1.75rem;
-      max-width: 28rem;
-      color: var(--stone);
-      font-size: var(--step-1);
-      font-weight: 400;
-    }
-
-    @media (min-width: 800px) {
-      .subhead { margin-left: 0; }
-    }
-
-    @media (max-width: 799px) {
-      .subhead { margin-left: auto; margin-right: auto; }
-    }
-
-    .notify {
-      width: min(100%, 26rem);
-    }
-
-    @media (max-width: 799px) {
-      .notify { margin: 0 auto; }
-    }
-
-    .notify-label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .notify-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    @media (min-width: 480px) {
-      .notify-row {
-        flex-direction: row;
-        align-items: stretch;
-      }
-    }
-
-    .notify input[type="email"] {
-      flex: 1;
-      min-width: 0;
-      appearance: none;
-      border: 1.5px solid var(--stone);
-      background: rgba(255, 255, 255, 0.35);
-      color: var(--basalt);
-      font: inherit;
-      font-size: var(--step-0);
-      padding: 0.85rem 1rem;
-      border-radius: 0.2rem;
-      outline: none;
-      transition: border-color 0.2s ease, background-color 0.2s ease;
-    }
-
-    .notify input[type="email"]::placeholder {
-      color: var(--stone);
-    }
-
-    .notify input[type="email"]:hover {
-      border-color: var(--basalt);
-    }
-
-    .notify input[type="email"]:focus-visible {
-      border-color: var(--teal);
-      box-shadow: var(--focus-ring);
-    }
-
-    .notify button {
-      appearance: none;
-      border: none;
-      background: var(--coral);
-      color: var(--concrete);
-      font-family: var(--font-display);
-      font-weight: 600;
-      font-size: var(--step-0);
-      letter-spacing: 0.04em;
-      padding: 0.85rem 1.25rem;
-      border-radius: 0.2rem;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background-color 0.2s ease, transform 0.15s var(--ease-out);
-    }
-
-    .notify button:hover {
-      background: #a84730; /* coral hover — still the signal color family */
-    }
-
-    .notify button:active {
-      transform: translateY(1px);
-    }
-
-    .notify button:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-
-    .notify button:disabled {
-      opacity: 0.7;
-      cursor: default;
-    }
-
-    .form-status {
-      min-height: 1.35em;
-      margin: 0.7rem 0 0;
-      font-size: var(--step--1);
-      color: var(--stone);
-    }
-
-    .form-status[data-state="success"] {
-      color: var(--teal);
-      font-weight: 500;
-    }
-
-    .form-status[data-state="error"] {
-      color: var(--coral);
-    }
-
-    .audience {
-      margin: 1.5rem 0 0;
-      font-family: var(--font-mono);
-      font-size: var(--step--1);
-      letter-spacing: 0.04em;
-      color: var(--stone);
-    }
-
-    @keyframes fade-in {
-      to { opacity: 1; }
-    }
-
-    @keyframes rise {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes boulder-split {
-      0% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      70% {
-        opacity: 1;
-        transform: scale(1.02);
-      }
-      100% {
-        opacity: 0;
-        transform: scale(1.04);
-        visibility: hidden;
-      }
-    }
-
-    @keyframes fragment-in {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translate(var(--dx, 0), var(--dy, 0));
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translate(0, 0);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-
-      .wordmark,
-      .fracture,
-      .copy {
-        opacity: 1;
-        transform: none;
-      }
-
-      .fracture .boulder { opacity: 0; visibility: hidden; }
-      .fracture .fragment,
-      .fracture .readout { opacity: 1; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fadak AI | Physical AI for underground mining</title>
+<meta name="description" content="Fadak AI is building camera and lidar kits that grade each underground development round for pull, overbreak and fragmentation, without taking a minute from the crew.">
+<meta property="og:title" content="Fadak AI | Physical AI for underground mining">
+<meta property="og:description" content="Experienced eyes on every round. Per-round grading for pull, overbreak and fragmentation on the machines you already run.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#171614}
+a{color:#F2F0EB}a:hover{color:#D9622B}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+html{scroll-behavior:smooth}
+</style>
 </head>
 <body>
-  <main class="page">
-    <a class="wordmark" href="/" aria-label="Fadak AI">Fadak <span>AI</span></a>
+<div style="font-family: Inter, system-ui, sans-serif; color: #F2F0EB; background: #171614; line-height: 1.55">
 
-    <div class="hero">
-      <!-- Signature: boulder → fragmented instance masks -->
-      <div class="fracture" id="fracture" aria-hidden="true">
-        <svg viewBox="0 0 240 240" role="img">
-          <!-- Intact boulder (solid) -->
-          <polygon
-            class="boulder"
-            points="52,168 68,78 118,42 168,58 204,112 192,178 142,208 78,198"
-          />
+<!-- Announcement bar -->
+<div style="background: #D9622B; color: #171614; padding: 10px 5%; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 14px; font-weight: 500; text-align: center">
+<span>Preparing underground tests at the NORCAT Underground Centre in Sudbury.</span>
+<a href="#status" style="color: #171614; font-weight: 600">See where we are</a>
+</div>
 
-          <!-- Fragments: alternating amber / teal outlines like adjacent masks -->
-          <polygon class="fragment amber" style="--dx:-10px;--dy:-8px"
-            points="68,78 118,42 138,72 112,118 78,108" />
-          <polygon class="fragment teal" style="--dx:8px;--dy:-12px"
-            points="118,42 168,58 178,96 138,72" />
-          <polygon class="fragment amber" style="--dx:14px;--dy:-2px"
-            points="168,58 204,112 186,138 158,128 178,96" />
-          <polygon class="fragment teal" style="--dx:12px;--dy:10px"
-            points="204,112 192,178 152,168 158,128 186,138" />
-          <polygon class="fragment amber" style="--dx:2px;--dy:14px"
-            points="192,178 142,208 118,176 152,168" />
-          <polygon class="fragment teal" style="--dx:-8px;--dy:12px"
-            points="142,208 78,198 92,152 118,176" />
-          <polygon class="fragment amber" style="--dx:-14px;--dy:4px"
-            points="78,198 52,168 78,108 112,118 92,152" />
-          <polygon class="fragment teal" style="--dx:-4px;--dy:-2px"
-            points="112,118 138,72 178,96 158,128 152,168 118,176 92,152" />
+<!-- Nav -->
+<header style="padding: 20px 5%; border-bottom: 1px solid #34322E">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; flex-wrap: wrap">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.01em; color: #F2F0EB">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 26 26"><path d="M3 24 L3 12 Q3 3 13 3 Q23 3 23 12 L23 24" fill="none" stroke="#D9622B" stroke-width="3"></path><rect x="10" y="14" width="6" height="10" fill="#F2F0EB"></rect></svg>
+<span>Fadak AI</span>
+</a>
+<nav aria-label="Main" style="display: flex; align-items: center; gap: 8px 28px; flex-wrap: wrap; font-size: 15px">
+<a href="#problem" style="text-decoration: none; padding: 12px 0">Problem</a>
+<a href="#build" style="text-decoration: none; padding: 12px 0">What we build</a>
+<a href="#technology" style="text-decoration: none; padding: 12px 0">Technology</a>
+<a href="#faq" style="text-decoration: none; padding: 12px 0">FAQ</a>
+<a href="#contact" style="text-decoration: none; background: #D9622B; color: #171614; font-weight: 600; padding: 12px 20px; border-radius: 2px">Talk to us</a>
+</nav>
+</div>
+</header>
 
-          <!-- Mono measurement readouts (instrument feel) -->
-          <text class="readout" x="88" y="68">P80 42mm</text>
-          <text class="readout" x="168" y="150">id:03</text>
-          <text class="readout" x="58" y="188">128mm</text>
-        </svg>
-      </div>
+<!-- Hero -->
+<section id="top" style="padding: 88px 5% 96px; background: radial-gradient(ellipse at 78% 40%, #2A2622 0%, #171614 62%)">
+<div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 56px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #D9622B">Physical AI for underground mining</div>
+<h1 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(42px, 5.6vw, 80px); line-height: 1.02; letter-spacing: -0.03em; text-wrap: balance">Experienced eyes on every round.</h1>
+<p style="margin: 0; font-size: 19px; color: #C9C5BE; max-width: 34em; text-wrap: pretty">We are building camera and lidar kits that grade each development round for pull, overbreak and fragmentation, without taking a minute from the crew. They clip onto the machines you already run.</p>
+<div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center">
+<a href="#contact" style="text-decoration: none; background: #D9622B; color: #171614; font-weight: 600; font-size: 16px; padding: 15px 26px; border-radius: 2px">Talk to us</a>
+<a href="#build" style="text-decoration: none; border: 1px solid #6B6862; font-weight: 500; font-size: 16px; padding: 14px 26px; border-radius: 2px">See what we're building</a>
+</div>
+</div>
 
-      <div class="copy">
-        <!--
-          HEADLINE OPTIONS (swap the visible <h1> text):
-          1. Particle size from a photo.          ← current
-          2. Blast face in. P80 out.
-          3. Sieve analysis, without the sieve.
-        -->
-        <h1 class="headline">Particle size from a photo.</h1>
+<!-- Sample round report -->
+<div style="background: #1E1D1A; border: 1px solid #34322E; border-radius: 4px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 20px; border-bottom: 1px solid #34322E; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">
+<span>Round report</span>
+<span>Sample layout · illustrative values</span>
+</div>
+<svg role="img" aria-label="Drift cross-section showing the scanned profile outside the design profile, with overbreak shaded" viewBox="0 0 520 360" style="display: block; width: 100%; height: auto">
+<g stroke="#2B2926" stroke-width="1">
+<path d="M0 60 H520 M0 120 H520 M0 180 H520 M0 240 H520 M0 300 H520"></path>
+<path d="M65 0 V360 M130 0 V360 M195 0 V360 M260 0 V360 M325 0 V360 M390 0 V360 M455 0 V360"></path>
+</g>
+<path fill-rule="evenodd" fill="#D9622B" fill-opacity="0.28" d="M98 322 L94 270 L102 220 L90 172 L104 124 L140 88 L190 66 L250 58 L300 68 L352 62 L398 96 L426 146 L420 204 L432 256 L424 322 Z M110 322 L110 166 Q110 86 260 86 Q410 86 410 166 L410 322 Z"></path>
+<path d="M110 322 L110 166 Q110 86 260 86 Q410 86 410 166 L410 322" fill="none" stroke="#9A9690" stroke-width="2" stroke-dasharray="7 6"></path>
+<path d="M98 322 L94 270 L102 220 L90 172 L104 124 L140 88 L190 66 L250 58 L300 68 L352 62 L398 96 L426 146 L420 204 L432 256 L424 322" fill="none" stroke="#D9622B" stroke-width="2.5" stroke-linejoin="round"></path>
+<path d="M60 322 H460" stroke="#6B6862" stroke-width="2"></path>
+<g fill="none" stroke="#6B6862" stroke-width="1.5" stroke-linejoin="round">
+<path d="M150 322 L158 300 L178 294 L190 308 L186 322 Z"></path>
+<path d="M190 322 L196 302 L214 286 L236 292 L240 322 Z"></path>
+<path d="M240 322 L246 280 L270 268 L292 284 L290 322 Z"></path>
+<path d="M290 322 L296 296 L318 290 L330 306 L328 322 Z"></path>
+<path d="M328 322 L336 304 L352 300 L364 312 L362 322 Z"></path>
+<path d="M214 286 L222 268 L244 262 L246 280"></path>
+<path d="M270 268 L282 256 L300 262 L292 284"></path>
+</g>
+</svg>
+<div style="display: flex; gap: 20px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid #34322E; font-size: 13px; color: #9A9690">
+<span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 18px; border-top: 2px dashed #9A9690"></span>Design profile</span>
+<span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 18px; border-top: 3px solid #D9622B"></span>Scanned profile</span>
+<span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 14px; height: 14px; background: rgba(217,98,43,0.35)"></span>Overbreak</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); border-top: 1px solid #34322E">
+<div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #34322E">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">Pull</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 26px; font-weight: 500">3.4 m</span>
+<span style="font-size: 13px; color: #9A9690">of 3.6 m drilled</span>
+</div>
+<div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #34322E">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">Overbreak</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 26px; font-weight: 500; color: #D9622B">11%</span>
+<span style="font-size: 13px; color: #9A9690">beyond the pay line</span>
+</div>
+<div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">P80</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 26px; font-weight: 500">210 mm</span>
+<span style="font-size: 13px; color: #9A9690">muck pile</span>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-        <p class="subhead">
-          Fadak AI measures rock fragmentation from blast-face and muck-pile
-          imagery — coming soon to the field.
-        </p>
+<!-- Status strip -->
+<section id="status" style="padding: 36px 5%; border-top: 1px solid #34322E; border-bottom: 1px solid #34322E; background: #1B1A18">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #9A9690">Where we are</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 24px 40px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 18px">Pre-pilot</span><span style="font-size: 14px; color: #9A9690">Working software, heading underground for validation</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 18px">NORCAT Underground Centre</span><span style="font-size: 14px; color: #9A9690">Test site, Sudbury, Ontario</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 18px">CIM member</span><span style="font-size: 14px; color: #9A9690">Canadian Institute of Mining, Metallurgy and Petroleum</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 18px">Toronto, Ontario</span><span style="font-size: 14px; color: #9A9690">Building for Northern Ontario's underground mines</span></div>
+</div>
+</div>
+</section>
 
-        <form class="notify" id="notify-form" novalidate>
-          <label class="notify-label" for="email">Email address</label>
-          <div class="notify-row">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              autocomplete="email"
-              inputmode="email"
-              required
-              placeholder="you@mine.com"
-              aria-describedby="form-status"
-            />
-            <button type="submit">Get notified</button>
-          </div>
-          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-        </form>
+<!-- Problem -->
+<section id="problem" style="padding: 104px 5%; background: #F2F0EB; color: #171614">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 32px 64px; align-items: end">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #9C3F17">The problem</div>
+<h2 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -0.025em; text-wrap: balance">The experienced eye is the scarcest thing underground.</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: 18px; color: #3B3935; text-wrap: pretty">Every development round needs someone experienced to look at it: after the blast, before re-entry, and after ground support. Those people are leaving faster than they are replaced, so checks get rushed, handed to green workers, or skipped.</p>
+<div style="display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; border-top: 1px solid #C9C5BE; padding-top: 16px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 30px; font-weight: 500; color: #9C3F17">~246,400</span>
+<span style="font-size: 14px; color: #5A5752; flex: 1 1 220px">hires needed across Canadian mining, 2026 to 2035. Source: MiHR 2026 Outlook, baseline scenario.</span>
+</div>
+</div>
+</div>
 
-        <p class="audience">Built for blast engineers and process metallurgists</p>
-      </div>
-    </div>
-  </main>
+<div style="border-top: 2px solid #171614">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 4px 48px; padding: 14px 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #5A5752">
+<span>How a round gets checked today</span>
+<span>Where it falls short</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">A supervisor judges it by eye</span>
+<span style="font-size: 16px; color: #3B3935">Fewer of them every year, and nothing is recorded for the next crew.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">A survey crew scans the heading</span>
+<span style="font-size: 16px; color: #3B3935">Needs a trained person at the face for every round, and the numbers reach the crew later.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">Scanning built into a new drill rig</span>
+<span style="font-size: 16px; color: #3B3935">Tied to one manufacturer's newer rigs. Jacklegs, older machines and mixed fleets are left out.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">The crew scans with a tablet</span>
+<span style="font-size: 16px; color: #3B3935">One more step in a cycle already short on minutes, so it is the first thing dropped.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">Surface fragmentation cameras</span>
+<span style="font-size: 16px; color: #3B3935">Designed around open-pit light and GPS. Underground means dust, darkness and no positioning.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 6px 48px; padding: 20px 0; border-top: 1px solid #C9C5BE; border-bottom: 1px solid #C9C5BE">
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 19px">Manual photo or sieve checks</span>
+<span style="font-size: 16px; color: #3B3935">Slow enough that they are done rarely, so blast design gets little feedback.</span>
+</div>
+</div>
+</div>
+</section>
 
-  <script>
-    (function () {
-      var fracture = document.getElementById("fracture");
-      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+<!-- What we build -->
+<section id="build" style="padding: 104px 5%">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px">
+<div style="display: flex; flex-direction: column; gap: 20px; max-width: 760px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #D9622B">What we build</div>
+<h2 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -0.025em; text-wrap: balance">One camera pass. How the round broke, and what it broke into.</h2>
+</div>
 
-      if (reduceMotion) {
-        fracture.classList.add("is-final");
-      } else {
-        // Force reflow so the animation reliably starts on load
-        void fracture.offsetWidth;
-        fracture.classList.add("is-animating");
-        fracture.addEventListener("animationend", function onEnd(event) {
-          if (event.target.classList.contains("readout") ||
-              event.animationName === "fade-in") {
-            fracture.classList.add("is-final");
-            fracture.classList.remove("is-animating");
-            fracture.removeEventListener("animationend", onEnd);
-          }
-        });
-        // Safety: lock final state after total sequence (~1.4s)
-        window.setTimeout(function () {
-          fracture.classList.add("is-final");
-          fracture.classList.remove("is-animating");
-        }, 1500);
-      }
+<div style="display: flex; flex-direction: column">
+<!-- 01 -->
+<article style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 32px 56px; align-items: center; padding: 40px 0; border-top: 1px solid #34322E">
+<div style="background: #1E1D1A; border: 1px solid #34322E; border-radius: 4px; padding: 20px">
+<svg aria-hidden="true" viewBox="0 0 320 180" style="display: block; width: 100%; height: auto">
+<path fill-rule="evenodd" fill="#D9622B" fill-opacity="0.28" d="M92 160 L88 112 L96 70 L128 44 L168 36 L204 46 L230 74 L226 118 L232 160 Z M100 160 L100 92 Q100 48 160 48 Q220 48 220 92 L220 160 Z"></path>
+<path d="M100 160 L100 92 Q100 48 160 48 Q220 48 220 92 L220 160" fill="none" stroke="#9A9690" stroke-width="2" stroke-dasharray="6 5"></path>
+<path d="M92 160 L88 112 L96 70 L128 44 L168 36 L204 46 L230 74 L226 118 L232 160" fill="none" stroke="#D9622B" stroke-width="2.5" stroke-linejoin="round"></path>
+<path d="M60 160 H260" stroke="#6B6862" stroke-width="2"></path>
+</svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">01 · Development</div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 34px; letter-spacing: -0.02em">Round Check</h3>
+<p style="margin: 0; font-size: 19px; font-weight: 500">A grade for every round, before the next shift.</p>
+<p style="margin: 0; font-size: 16px; color: #C9C5BE; text-wrap: pretty">A clip-on lidar and camera kit rides on the machine that mucks the round. It records while the operator works, then reports pull against design, and overbreak and underbreak by zone. No one stops to scan.</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px">
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Pull</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Overbreak by zone</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Per-heading trend</span>
+</div>
+</div>
+</article>
 
-      var form = document.getElementById("notify-form");
-      var email = document.getElementById("email");
-      var status = document.getElementById("form-status");
-      var button = form.querySelector('button[type="submit"]');
+<!-- 02 -->
+<article style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 32px 56px; align-items: center; padding: 40px 0; border-top: 1px solid #34322E">
+<div style="background: #1E1D1A; border: 1px solid #34322E; border-radius: 4px; padding: 20px">
+<svg aria-hidden="true" viewBox="0 0 320 180" style="display: block; width: 100%; height: auto">
+<path d="M40 20 V150 H290" fill="none" stroke="#6B6862" stroke-width="2"></path>
+<path d="M40 150 C110 148 130 120 160 84 C190 48 220 32 290 28" fill="none" stroke="#F2F0EB" stroke-width="2.5"></path>
+<path d="M40 52 H196 V150" fill="none" stroke="#D9622B" stroke-width="2" stroke-dasharray="6 5"></path>
+<circle cx="196" cy="52" r="5" fill="#D9622B"></circle>
+<text x="204" y="170" fill="#D9622B" font-family="IBM Plex Mono, monospace" font-size="13">P80</text>
+<text x="8" y="56" fill="#9A9690" font-family="IBM Plex Mono, monospace" font-size="12">80%</text>
+</svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">02 · Fragmentation</div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 34px; letter-spacing: -0.02em">GrainSight</h3>
+<p style="margin: 0; font-size: 19px; font-weight: 500">Size distribution from the muck pile, in the dark.</p>
+<p style="margin: 0; font-size: 16px; color: #C9C5BE; text-wrap: pretty">The same pass outlines individual fragments in the muck pile and the bucket, then returns the full size curve, P80 and an oversize count. It is built for underground dust and low light, and it can also run on cameras a site already owns.</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px">
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Size distribution</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">P80</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Oversize count</span>
+</div>
+</div>
+</article>
 
-      // Waitlist notifications → hussain.hn18@gmail.com via FormSubmit
-      // First submission: check that inbox and confirm FormSubmit's activation email.
-      var NOTIFY_ENDPOINT =
-        "https://formsubmit.co/ajax/hussain.hn18@gmail.com";
+<!-- 03 -->
+<article style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 32px 56px; align-items: center; padding: 40px 0; border-top: 1px solid #34322E; border-bottom: 1px solid #34322E">
+<div style="background: #1E1D1A; border: 1px dashed #4A4742; border-radius: 4px; padding: 20px">
+<svg aria-hidden="true" viewBox="0 0 320 180" style="display: block; width: 100%; height: auto">
+<circle cx="160" cy="90" r="58" fill="none" stroke="#4A4742" stroke-width="2" stroke-dasharray="6 6"></circle>
+<path d="M160 32 A58 58 0 0 1 210 119" fill="none" stroke="#D9622B" stroke-width="2.5"></path>
+<path d="M203 110 L210 119 L221 113" fill="none" stroke="#D9622B" stroke-width="2.5" stroke-linejoin="round"></path>
+<circle cx="160" cy="32" r="7" fill="#F2F0EB"></circle>
+<circle cx="210" cy="119" r="7" fill="#D9622B"></circle>
+<circle cx="110" cy="119" r="7" fill="#1E1D1A" stroke="#9A9690" stroke-width="2"></circle>
+</svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">03 · On the roadmap</div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 34px; letter-spacing: -0.02em">Closing the loop</h3>
+<p style="margin: 0; font-size: 19px; font-weight: 500">From a grade to a machine that acts on it.</p>
+<p style="margin: 0; font-size: 16px; color: #C9C5BE; text-wrap: pretty">Per-round data is the groundwork for equipment that corrects itself round over round. This is where we are headed.</p>
+</div>
+</article>
+</div>
+</div>
+</section>
 
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
+<!-- Technology -->
+<section id="technology" style="padding: 104px 5%; background: #F2F0EB; color: #171614">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px">
+<div style="display: flex; flex-direction: column; gap: 20px; max-width: 760px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #9C3F17">Technology</div>
+<h2 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -0.025em; text-wrap: balance">Built for the conditions, and for the fleet you have.</h2>
+<p style="margin: 0; font-size: 18px; color: #3B3935">Most per-round scanning ships on expensive new rigs. Ours is meant to plug in anywhere.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); gap: 24px">
+<div style="background: #171614; color: #F2F0EB; padding: 36px; border-radius: 4px; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #D9622B">Sensing</div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 28px; letter-spacing: -0.02em">Hardened perception</h3>
+<p style="margin: 0; font-size: 16px; color: #C9C5BE; text-wrap: pretty">Lidar and an industrial camera locked together on one rigid plate, with their own lighting and a sealed edge computer. The kit is radio-silent near loaded faces: data is stored on board and synced by swapping a drive.</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; margin-top: 6px">
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Dust</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Low light</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">No GPS</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Offline-first</span>
+</div>
+</div>
+<div style="background: #171614; color: #F2F0EB; padding: 36px; border-radius: 4px; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #D9622B">Integration</div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 28px; letter-spacing: -0.02em">Feed-agnostic software</h3>
+<p style="margin: 0; font-size: 16px; color: #C9C5BE; text-wrap: pretty">One grading engine with several ways in: the clip-on kit, a phone lidar scan after mucking, or point-cloud files from your survey team. Designs come in from the drawings you already have. Nothing connects to machine controls.</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; margin-top: 6px">
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Any rig</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">Mixed fleets</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">E57 · LAS · PLY</span>
+<span style="border: 1px solid #4A4742; padding: 6px 10px; border-radius: 2px">DWG · PDF</span>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-        var value = (email.value || "").trim();
-        var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+<!-- FAQ -->
+<section id="faq" style="padding: 104px 5%; background: #E8E5DF; color: #171614">
+<div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #9C3F17">FAQ</div>
+<h2 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -0.025em">Questions we get asked</h2>
+</div>
+<div style="border-top: 2px solid #171614">
+<details open style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>Do we need a new drill rig?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">No. The kit clips onto the machine that mucks the round, and the software also accepts phone scans and survey files. It is meant for jacklegs, older machines and mixed fleets as much as new equipment.</p>
+</details>
+<details style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>Does the crew have to do anything?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">With the clip-on kit, no. It starts recording when it sees the face and stops when the machine leaves. The phone path is a short scan after mucking, for sites that want to start without mounting anything.</p>
+</details>
+<details style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>Does it need a network underground?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">No. The kit runs with its radios off and stores everything on board. Data comes out on a removable drive.</p>
+</details>
+<details style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>Does it replace our survey?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">No. Survey stays the reference. Round Check gives the crew and the supervisor a grade on every round, including the ones survey never gets to.</p>
+</details>
+<details style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>How accurate is it?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">That is what the underground tests are for. Our grades will be logged before an independent survey of the same round is released, then compared blind. Our target for pull is within 3 cm of survey. We will share the results either way.</p>
+</details>
+<details style="border-bottom: 1px solid #B8B4AC">
+<summary style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 20px"><span>Can we try it?</span><span aria-hidden="true" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: #9C3F17">+</span></summary>
+<p style="margin: 0; padding: 0 0 24px; font-size: 16px; color: #3B3935; max-width: 44em">We are pre-pilot and lining up first sites now. If you run development headings, the most useful thing today is a conversation about how you check a round and what a bad one costs you.</p>
+</details>
+</div>
+</div>
+</section>
 
-        if (!valid) {
-          status.dataset.state = "error";
-          status.textContent = "Enter a valid email address.";
-          email.focus();
-          return;
-        }
+<!-- Closing CTA + contact form -->
+<section id="contact" style="padding: 112px 5%; background: #171614; border-bottom: 1px solid #34322E">
+<div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 48px 72px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: clamp(36px, 4.2vw, 60px); line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance">Running development headings? Tell us how you check a round.</h2>
+<p style="margin: 0; font-size: 18px; color: #C9C5BE; max-width: 32em">We are speaking with development contractors and mines in Northern Ontario ahead of our first pilots.</p>
+<p style="margin: 0; font-size: 15px; color: #9A9690">Prefer email? <a href="mailto:ali@fadakai.com">ali@fadakai.com</a></p>
+</div>
+<form id="contact-form" action="#contact" style="background: #1E1D1A; border: 1px solid #34322E; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="cf-name" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">Name</label><input id="cf-name" name="name" type="text" autocomplete="name" required style="font: inherit; font-size: 16px; color: #F2F0EB; background: #171614; border: 1px solid #4A4742; border-radius: 2px; padding: 13px 14px; min-height: 48px; box-sizing: border-box; width: 100%"></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="cf-company" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">Company</label><input id="cf-company" name="company" type="text" autocomplete="organization" style="font: inherit; font-size: 16px; color: #F2F0EB; background: #171614; border: 1px solid #4A4742; border-radius: 2px; padding: 13px 14px; min-height: 48px; box-sizing: border-box; width: 100%"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="cf-email" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">Work email</label><input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required style="font: inherit; font-size: 16px; color: #F2F0EB; background: #171614; border: 1px solid #4A4742; border-radius: 2px; padding: 13px 14px; min-height: 48px; box-sizing: border-box; width: 100%"></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="cf-message" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9A9690">How do you check a round today?</label><textarea id="cf-message" name="message" rows="4" style="font: inherit; font-size: 16px; color: #F2F0EB; background: #171614; border: 1px solid #4A4742; border-radius: 2px; padding: 13px 14px; min-height: 48px; box-sizing: border-box; width: 100%; resize: vertical; min-height: 120px"></textarea></div>
+<input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="display: none">
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<button id="cf-submit" type="submit" style="font: inherit; cursor: pointer; border: 0; background: #D9622B; color: #171614; font-weight: 600; font-size: 17px; padding: 15px 30px; min-height: 48px; border-radius: 2px">Send message</button>
+<p id="cf-status" role="status" aria-live="polite" style="margin: 0; font-size: 15px; color: #C9C5BE"></p>
+</div>
+</form>
+</div>
+</section>
 
-        button.disabled = true;
-        status.dataset.state = "";
-        status.textContent = "Sending…";
+<!-- Footer -->
+<footer style="padding: 64px 5% 40px; background: #171614">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 20px">Fadak AI</div>
+<p style="margin: 0; font-size: 14px; color: #9A9690; max-width: 22em">Physical AI for underground mining, starting with the round.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">Products</div>
+<a href="#build" style="text-decoration: none">Round Check</a>
+<a href="#build" style="text-decoration: none">GrainSight</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">Company</div>
+<a href="#problem" style="text-decoration: none">Problem</a>
+<a href="#technology" style="text-decoration: none">Technology</a>
+<a href="#faq" style="text-decoration: none">FAQ</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #9A9690">Connect</div>
+<a href="mailto:ali@fadakai.com" style="text-decoration: none">ali@fadakai.com</a>
+<span style="color: #9A9690">Toronto, Ontario</span>
+</div>
+</div>
+<div style="border-top: 1px solid #34322E; padding-top: 24px; font-size: 13px; color: #9A9690">© 2026 Fadak AI</div>
+</div>
+</footer>
 
-        fetch(NOTIFY_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            email: value,
-            _subject: "Fadak AI waitlist signup",
-            message: "New waitlist signup: " + value,
-          }),
-        })
-          .then(function (response) {
-            if (!response.ok) throw new Error("Request failed");
-            return response.json();
-          })
-          .then(function () {
-            email.disabled = true;
-            status.dataset.state = "success";
-            status.textContent = "You're on the list.";
-          })
-          .catch(function () {
-            button.disabled = false;
-            status.dataset.state = "error";
-            status.textContent = "Something went wrong. Try again.";
-          });
-      });
-    })();
-  </script>
+</div>
+<script>
+(function () {
+  // Contact form -> FormSubmit (same inbox as the earlier waitlist form)
+  var ENDPOINT = "https://formsubmit.co/ajax/hussain.hn18@gmail.com";
+  var form = document.getElementById("contact-form");
+  var status = document.getElementById("cf-status");
+  var button = document.getElementById("cf-submit");
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var f = form.elements;
+    if (f._honey.value) return;
+    var name = f.name.value.trim(), email = f.email.value.trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.style.color = "#F0A27E";
+      status.textContent = "Add your name and a valid email.";
+      (name ? f.email : f.name).focus();
+      return;
+    }
+    button.disabled = true;
+    status.style.color = "#C9C5BE";
+    status.textContent = "Sending...";
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: name,
+        company: f.company.value.trim(),
+        email: email,
+        message: f.message.value.trim(),
+        _subject: "Fadak AI website enquiry from " + name
+      })
+    })
+      .then(function (r) { if (!r.ok) throw new Error("failed"); return r.json(); })
+      .then(function () {
+        form.reset();
+        status.textContent = "Thanks. We will be in touch shortly.";
+      })
+      .catch(function () {
+        status.style.color = "#F0A27E";
+        status.textContent = "That did not send. Try again, or email ali@fadakai.com.";
+      })
+      .then(function () { button.disabled = false; });
+  });
+})();
+</script>
 </body>
 </html>
