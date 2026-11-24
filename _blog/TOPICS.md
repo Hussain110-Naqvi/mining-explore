@@ -7,9 +7,9 @@ Take the first unchecked topic. Tick it when published: `- [x] Title (YYYY-MM-DD
 - [x] Pull, overbreak and fragmentation: the three numbers in every round (2026-11-03, pull-overbreak-fragmentation)
 - [x] The 2026 mining labour gap, and what it means at the face (2026-11-10, mining-labour-gap-2026)
 - [x] What a metre of development really costs (2026-11-17, what-a-metre-of-development-costs)
+- [x] Mine-to-mill: how the blast sets up the mill's day (2026-11-24, mine-to-mill)
 
 ## Up next
-- [ ] Mine-to-mill: how the blast sets up the mill's day (fragmentation, P80 and published drill-to-mill results)
 - [ ] How fragmentation gets measured today: sieving, photo analysis, and why measuring rock from 2D images is hard
 - [ ] Why cameras struggle underground: dust, water, lighting, blast standoff and power, and what that means for hardware design
 - [ ] Unit-rate development contracts: why owners and contractors both benefit from an independent record of each round
